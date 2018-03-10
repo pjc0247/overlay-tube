@@ -6,13 +6,23 @@ function closeApp() {
     var window = remote.getCurrentWindow();
     window.close();
 }
+function showSidebar() {
+    $("#sidebar").addClass("visible");
+    $("#sidebar-back").addClass("visible");
+}
+function hideSidebar() {
+    $("#sidebar").removeClass("visible");
+    $("#sidebar-back").removeClass("visible");
+}
 function showInputUrlDialog() {
-    //Metro.dialog.open('#dialog-input-url');
+    Metro.dialog.open('#dialog-input-url');
+}
+function showSettingDialog() {
     Metro.dialog.open('#dialog-setting');
 }
 function openUrl(){
     let url = $("#input-url").val();
-    let videoId = /v=([a-zA-Z0-9]+)/.exec(url)[1];
+    let videoId = /v=([a-zA-Z0-9\-]+)/.exec(url)[1];
 
     loadVideo(videoId);
 }
@@ -27,7 +37,7 @@ function onYouTubeIframeAPIReady() {
     player = new YT.Player('youtube', {
         height: '360',
         width: '640',
-        videoId: 'M7lc1UVf-VE',
+        videoId: getConfig("last_video_id", 'M7lc1UVf-VE'),
         playerVars: {rel: 0, showinfo: 0},
         events: {
             'onReady': onPlayerReady,
@@ -57,6 +67,8 @@ function start() {
 };
 
 function loadVideo(id) {
+    setConfig("last_video_id", id);
+
     player.loadVideoById({'videoId': id});
 
     var request = gapi.client.youtube.search.list({

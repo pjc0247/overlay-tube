@@ -13,19 +13,17 @@
   </head>
   <body>
     <div id="youtube"></div>
-    <!--
-    <iframe id="youtube" src="https://www.youtube.com/embed/CCR-UI3GafU?rel=0&showinfo=0" frameborder="0" allow="autoplay; encrypted-media" allowfullscreen></iframe>
-    -->
     <div class="floating-menu">
       <div class="left-section">
         <div id="video-title">
         </div>
       </div>
       <div class="right-section">
+        
         <div id="move-btn" class="menu-button" style="-webkit-app-region: drag">
           <img src="img/move.png" />
         </div>
-        <button class="menu-button" onclick="showInputUrlDialog()">
+        <button class="menu-button" onclick="showSidebar()">
           <img src="img/menu.png" />
         </button>
         <button class="menu-button" onclick="closeApp()">
@@ -33,6 +31,18 @@
         </button>
       </div>
     </div>
+
+    <div id="sidebar-back" onclick="hideSidebar()">
+    </div>
+    <ul id="sidebar" class="sidenav-counter">
+    <li><a onclick="hideSidebar(); showInputUrlDialog();">
+        <span class="mif-link icon"></span>
+    </a></li>
+    <li><a onclick="hideSidebar(); showSettingDialog();">
+        <span class="mif-cog icon"></span>
+    </a></li>
+    </ul>
+
     <div id="splash">
         <span id="logo-text">OverlayTube</span>
         <div id="loading" data-role="activity" data-type="metro"></div>
@@ -76,4 +86,5 @@
 <script src="https://www.youtube.com/iframe_api"></script>
 <script>if (window.module) module = window.module;</script>
 
+<script src="js/storageutil.js"></script>
 <script src="js/app.js"></script>

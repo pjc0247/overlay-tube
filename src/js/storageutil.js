@@ -1,6 +1,6 @@
-function getData(name, defaultValue) {
+function getConfig(name, defaultValue) {
     return localStorage.getItem(name) || defaultValue;
 }
-function setData(name, value) {
+function setConfig(name, value) {
     localStorage.setItem(name, value);
 }
