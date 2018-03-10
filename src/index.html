@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="UTF-8">
+    <title>OverlayTube</title>
+
+    <link rel="stylesheet/less" type="text/css" href="css/overlay-default.less">
+    <link rel="stylesheet/less" type="text/css" href="css/overlay.less">
+    <link rel="stylesheet/less" type="text/css" href="css/splash.less">
+    <link rel="stylesheet" href="css/dialog-setting.css">
+
+    <link rel="stylesheet" href="css/vendor/metro-all.min.css">
+  </head>
+  <body>
+    <div id="youtube"></div>
+    <!--
+    <iframe id="youtube" src="https://www.youtube.com/embed/CCR-UI3GafU?rel=0&showinfo=0" frameborder="0" allow="autoplay; encrypted-media" allowfullscreen></iframe>
+    -->
+    <div class="floating-menu">
+      <div class="left-section">
+        <div id="video-title">
+        </div>
+      </div>
+      <div class="right-section">
+        <div id="move-btn" style="-webkit-app-region: drag">
+          <img class="menu-button" src="img/move.png" />
+        </div>
+        <button onclick="showInputUrlDialog()">
+          <img class="menu-button" src="img/menu.png" />
+        </button>
+        <button onclick="closeApp()">
+          <img class="menu-button" src="img/close.png" />
+        </button>
+      </div>
+    </div>
+    <div id="splash">
+        <span id="logo-text">OverlayTube</span>
+        <div id="loading" data-role="activity" data-type="metro"></div>
+    </div>
+    <div id="dialog-setting" class="dialog" data-role="dialog" width="100%" height="90%">
+        <div class="dialog-title">Setting</div>
+        <div class="dialog-content">
+            <div class="form-group">
+              <label>Opacity</label>
+              <input id="input-opacity"
+                 data-min="30" data-max="100"
+                 data-role="slider" data-on-move="onOpacityChange(arguments[0]);">
+            </div>
+        </div>
+        <div class="dialog-actions">
+            <button class="button primary js-dialog-close">Close</button>
+        </div>
+    </div>
+    <div id="dialog-input-url" class="dialog" data-role="dialog">
+        <div class="dialog-title">Please enter Youtube URL:</div>
+        <div class="dialog-content">
+            <input type="url" id="input-url" placeholder="https://www.youtube.com/watch?v=3HsvJT2twOE" />
+        </div>
+        <div class="dialog-actions">
+            <button class="button js-dialog-close">Cancel</button>
+            <button onclick="openUrl()" class="button primary js-dialog-close">Open</button>
+        </div>
+    </div>
+    <script>
+      // You can also require other files to run in this process
+      require('./renderer.js')
+    </script>
+  </body>
+</html>
+
+<script>if (typeof module === 'object') {window.module = module; module = undefined;}</script>
+<script src="js/vendor/jquery-3.3.1.min.js"></script> 
+<script src="js/vendor/less.min.js" ></script>
+<script src="js/vendor/metro.min.js"></script> 
+<script src="https://apis.google.com/js/api.js"></script>
+<script src="https://www.youtube.com/iframe_api"></script>
+<script>if (window.module) module = window.module;</script>
+
+<script src="js/app.js"></script>
