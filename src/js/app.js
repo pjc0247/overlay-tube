@@ -1,4 +1,5 @@
 const remote = require('electron').remote;
+const clipboard = require('electron').clipboard;
 
 var player = null;
 
@@ -16,6 +17,14 @@ function hideSidebar() {
 }
 function showInputUrlDialog() {
     Metro.dialog.open('#dialog-input-url');
+
+    let clipboardUrl = clipboard.readText();
+    let res = /v=([a-zA-Z0-9\-]+)/.exec(clipboardUrl);
+
+    if (res.length == 0)
+        $("#input-url").val("");
+    else
+        $("#input-url").val(clipboardUrl);
 }
 function showSettingDialog() {
     Metro.dialog.open('#dialog-setting');
