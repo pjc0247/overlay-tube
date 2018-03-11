@@ -1,10 +1,10 @@
 {
-  "name": "overlaytube",
+  "name": "overlaytube2",
   "version": "1.0.0",
   "description": "OverlayTube",
   "main": "js/main.js",
   "scripts": {
-    "start": "electron-forge start",
+    "start": "electron .",
     "package": "electron-forge package",
     "make": "electron-forge make"
   },
@@ -21,6 +21,7 @@
     "electron-prebuilt-compile": "1.8.2"
   },
   "dependencies": {
+    "electron": "~1.8.2",
     "electron-compile": "^6.4.2",
     "electron-squirrel-startup": "^1.0.0",
     "jquery": "^3.3.1"
