@@ -2,6 +2,7 @@ const remote = require('electron').remote;
 const clipboard = require('electron').clipboard;
 
 var player = null;
+var currentVideoId = null
 
 function closeApp() {
     var window = remote.getCurrentWindow();
@@ -34,6 +35,15 @@ function openUrl(){
     let videoId = /v=([a-zA-Z0-9\-]+)/.exec(url)[1];
 
     loadVideo(videoId);
+}
+
+function checkClipboardAndPlay() {
+    let clipboardUrl = clipboard.readText();
+    let res = /v=([a-zA-Z0-9\-_]+)/.exec(clipboardUrl);
+    
+    if (res.length >= 1)
+    if (currentVideoId != res[1])
+        loadVideo(res[1]);
 }
 
 function onOpacityChange(val) {
@@ -78,6 +88,7 @@ function start() {
 function loadVideo(id) {
     setConfig("last_video_id", id);
 
+    currentVideoId = id;
     player.loadVideoById({'videoId': id});
 
     var request = gapi.client.youtube.search.list({
@@ -92,3 +103,6 @@ function loadVideo(id) {
 }
 
 gapi.load('client', start);
+
+
+setInterval(checkClipboardAndPlay, 1000);
