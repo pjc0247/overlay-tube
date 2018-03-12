@@ -2,11 +2,18 @@ const remote = require('electron').remote;
 const clipboard = require('electron').clipboard;
 
 var player = null;
-var currentVideoId = null
+var currentVideoId = null;
+var lastAppliedClipboardText = null;
 
 function closeApp() {
     var window = remote.getCurrentWindow();
     window.close();
+}
+function showRecommendedVideos() {
+    $("#recommended-video").addClass("visible");
+}
+function hideRecommendedVideos() {
+    $("#recommended-video").removeClass("visible");
 }
 function showSidebar() {
     $("#sidebar").addClass("visible");
@@ -22,7 +29,7 @@ function showInputUrlDialog() {
     let clipboardUrl = clipboard.readText();
     let res = /v=([a-zA-Z0-9\-]+)/.exec(clipboardUrl);
 
-    if (res.length == 0)
+    if (res != null && res.length == 0)
         $("#input-url").val("");
     else
         $("#input-url").val(clipboardUrl);
@@ -39,11 +46,18 @@ function openUrl(){
 
 function checkClipboardAndPlay() {
     let clipboardUrl = clipboard.readText();
+    if (lastAppliedClipboardText == clipboardUrl)
+        return;
+
     let res = /v=([a-zA-Z0-9\-_]+)/.exec(clipboardUrl);
     
+    if (res == null) return;
+
     if (res.length >= 1)
     if (currentVideoId != res[1])
         loadVideo(res[1]);
+
+    lastAppliedClipboardText = clipboardUrl;
 }
 
 function onOpacityChange(val) {
@@ -80,8 +94,8 @@ function start() {
   gapi.client.init({
     'apiKey': 'AIzaSyBvmYBTcuply1MrT9icS6Lkc0njnLYeIhY',
     'discoveryDocs': ["https://www.googleapis.com/discovery/v1/apis/youtube/v3/rest"],
-    //'clientId': 'YOUR_WEB_CLIENT_ID.apps.googleusercontent.com',
-    'scope': 'profile',
+    //'clientId': 'AIzaSyBvmYBTcuply1MrT9icS6Lkc0njnLYeIhY.apps.googleusercontent.com',
+    //'scope': 'profile',
   });
 };
 
@@ -94,11 +108,26 @@ function loadVideo(id) {
     var request = gapi.client.youtube.search.list({
         type: 'video',
         part: 'snippet',
-        relatedToVideoId: '3HsvJT2twOE'
+        relatedToVideoId: id
     });
     request.execute(function(response) {
+        console.log(response);
         var str = JSON.stringify(response.result);
         console.log(str);
+
+        let videoContainer = $("#recommended-video");
+        //videoContainer.empty();
+
+        let items = response.result.items;
+        for (let i=0;i<items.length;i++) {
+            let item = items[i];
+
+            $("#r" + (i+1)).html("<img src=\"" + item.snippet.thumbnails.medium.url +
+                "\" onclick=loadVideo(\"" + item.id.videoId + "\");" +
+                " />");
+            //videoContainer.append("<img src=\"" + item.snippet.thumbnails.medium.url + "\" />");
+        }
+        //response.result;
     });
 }
 
