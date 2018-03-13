@@ -1,19 +1,23 @@
 const remote = require('electron').remote;
 const clipboard = require('electron').clipboard;
 
-var player = null;
-var currentVideoId = null;
-var lastAppliedClipboardText = null;
+let player = null;
+let currentVideoId = null;
+let lastAppliedClipboardText = null;
+
+let isGapiReady = false, isYoutubeReady = false; 
 
 function closeApp() {
-    var window = remote.getCurrentWindow();
+    let window = remote.getCurrentWindow();
     window.close();
 }
 function showRecommendedVideos() {
     $("#recommended-video").addClass("visible");
+    $("#show-recommended-video").addClass("invisible");
 }
 function hideRecommendedVideos() {
     $("#recommended-video").removeClass("visible");
+    $("#show-recommended-video").removeClass("invisible");
 }
 function showSidebar() {
     $("#sidebar").addClass("visible");
@@ -66,7 +70,11 @@ function onOpacityChange(val) {
     });
 }
 
-function onYouTubeIframeAPIReady() {
+function createPlayer() {
+    if (player != null) return;
+    if (isGapiReady == false) return;
+    if (isYoutubeReady == false) return;
+
     player = new YT.Player('youtube', {
         height: '360',
         width: '640',
@@ -78,6 +86,10 @@ function onYouTubeIframeAPIReady() {
         }
     });
 }
+function onYouTubeIframeAPIReady() {
+    isYoutubeReady = true;
+    createPlayer();
+}
 function onPlayerReady(event) {
     event.target.playVideo();
 
@@ -86,8 +98,10 @@ function onPlayerReady(event) {
     }, 1000);
 }
 function onPlayerStateChange(event) {
-    if (event.data == YT.PlayerState.PLAYING)
+    if (event.data == YT.PlayerState.PLAYING) {
+        loadRecommendedVideos(currentVideoId);
         $("#video-title").html(player.getVideoData().title);
+    }
 }
 
 function start() {
@@ -97,6 +111,9 @@ function start() {
     //'clientId': 'AIzaSyBvmYBTcuply1MrT9icS6Lkc0njnLYeIhY.apps.googleusercontent.com',
     //'scope': 'profile',
   });
+
+  isGapiReady = true;
+  createPlayer();
 };
 
 function loadVideo(id) {
@@ -104,34 +121,27 @@ function loadVideo(id) {
 
     currentVideoId = id;
     player.loadVideoById({'videoId': id});
-
-    var request = gapi.client.youtube.search.list({
+}
+function loadRecommendedVideos(id) {
+    let request = gapi.client.youtube.search.list({
         type: 'video',
         part: 'snippet',
         relatedToVideoId: id
     });
     request.execute(function(response) {
-        console.log(response);
-        var str = JSON.stringify(response.result);
-        console.log(str);
-
         let videoContainer = $("#recommended-video");
-        //videoContainer.empty();
-
         let items = response.result.items;
+
         for (let i=0;i<items.length;i++) {
             let item = items[i];
 
             $("#r" + (i+1)).html("<img src=\"" + item.snippet.thumbnails.medium.url +
                 "\" onclick=loadVideo(\"" + item.id.videoId + "\");" +
                 " />");
-            //videoContainer.append("<img src=\"" + item.snippet.thumbnails.medium.url + "\" />");
         }
-        //response.result;
     });
 }
 
 gapi.load('client', start);
-
 
 setInterval(checkClipboardAndPlay, 1000);
